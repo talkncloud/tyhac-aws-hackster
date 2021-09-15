@@ -37,6 +37,9 @@ You can go ahead and use your normal tools to run predictions. If you prefer to 
 
 A lambda version of the inference is provided in the aws-cdk folder. This is the endpoint used by the project and the IoT device as its cheaper and met my requirements, also lambda is cool.
 
+## Updating the model
+If you do deploy these notebooks with the intention of updating the deployed lambda model in the project. Use cell in the training notebook to sync the model or download from S3. The model will then need to be extracted and copied into the lambda/prediction folder. Replace the exported pickle file in this folder and deploy the project using projen / cdk. Thats it!
+
 ## Costs
 A note about costs, look, SageMaker is great but costs can get out of hand pretty quickly. Be sure to setup billing alerts and watch your spend. I originally used SageMaker studio and EFS is used with that. Your costs will quickly increase with this and this particular set of notebooks as I pull down the data into the session and then upload into s3. The data prep itself you could run locally if you have the space and compute, once the prep is done you shouldn't have to run it again.
 
