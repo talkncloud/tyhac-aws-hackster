@@ -1,0 +1,1 @@
+const char tyhacVersion[] = "tyhac v0.0.1";

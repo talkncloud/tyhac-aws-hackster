@@ -1,6 +1,8 @@
 ## TYHAC (turn your head and cough)
 TYHAC (pronounced *tieack*) is an IoT covid-19 audio thing that uses deep learning to determine if an audio cough sample is positive or negative for covid-19.
 
+To my knowledge this is the first publically available covid-19 audio analysis project that provides access to the trained model, source code for hosting the model and cloud infrastructure to host an end to end solution.
+
 ## Buying Mick a coffee
 If you enjoyed this project and feel like shouting me a coffee, I'll happily accept but if thats not for you, I'd appreciate if you could please star or share this project for visibility to help others.
 
@@ -12,7 +14,7 @@ Not a doctor. No medical professionals have reviewed or worked on this project. 
 ## Intended audience
 This project is for builders, thinkers and those who can't stop tinkering. If you're into IoT, ML, AWS and/or tech, then read on. 
 
-This project was my submission to the [hackster healthy spaces with challenge 2021](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) which uses an M5 Stack Core2 AWS IoT EduKit, a small esp32 device with a whole bunch of capabilities and AWS!
+This project was my submission to the [hackster healthy spaces with challenge 2021](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) which uses an [M5 Stack Core2 AWS IoT EduKit](https://www.talkncloud.com/core-2-m5-iot-stack-aws-edukit-unboxing/), a small esp32 device with a whole bunch of capabilities and AWS!
 
 While not a requirement to publish the project publically, I am doing so as an AWS Community Builder in the hopes that this work (while not perfect) may help others solve a challenge across AWS IoT, SageMaker machine / deep learning and also CDK.
 
@@ -22,20 +24,21 @@ TBA diagram
 
 ## Bill of materials
 
-| Item | Description | Link |
-|--|--|--|
-| EduKit | M5 Core2 AWS EduKit | https://shop.m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit |
-| MIC | LM393 Mic Unit | https://shop.m5stack.com/products/microphone-unit-lm393?_pos=1&_sid=09124710e&_ss=r |
-| SD | 16GB Micro SD card | https://www.officeworks.com.au/shop/officeworks/p/sandisk-ultra-16gb-micro-sdhc-memory-card-sdsq16gb |
-
+| Item | Quantity | Description | Link |
+|--|--|--|--|
+| EduKit | x1 | M5 Core2 AWS EduKit | https://shop.m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit |
+| MIC | x1 | LM393 Mic Unit | https://shop.m5stack.com/products/microphone-unit-lm393?_pos=1&_sid=09124710e&_ss=r |
+| SD | x1 | 16GB Micro SD card | https://www.officeworks.com.au/shop/officeworks/p/sandisk-ultra-16gb-micro-sdhc-memory-card-sdsq16gb |
 
 ## Intended use cases
 The core of the solution revolves around two modes:
 
 1.  Passive
+
     This mode is intended to be used in an office setting such as a cubicle, common area and elevators. The device will actively listen for noises that register and then submit samples for predictions.
 
 2.  Active
+
     This mode is intended for clinicians as a field unit. The device does not actively listen and does not require the additional LM393 mic sensor unit, the unit can be used on battery for this mode. This gives the ability to submit positive samples to the dataset and also test patients.
 
 ## Using this repo
@@ -50,8 +53,10 @@ Due to the size and complexity of the project, I have split it up into three dis
 3.  aws-sagemaker
     the juicy notebooks and scripts used to run data preparation, training and inference with sagemaker.
 
+The following sections will give high-level quick start instructions, refer to the folder readme for more info. The source code also provides links to more details where applicable. 
+
 ## CDK
-I have used [projen](https://github.com/projen/projen) to create the project, great project, check it out. To deploy the stack do the following:
+I have used [projen](https://github.com/projen/projen) to create the project (great project, check it out). To deploy the stack do the following:
 
 1. npm install -g projen
 2. yarn install
