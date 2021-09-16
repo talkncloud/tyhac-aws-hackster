@@ -131,7 +131,7 @@ export class TyhacStack extends Stack {
               Stack.of(this).region +
               ":" +
               Stack.of(this).account +
-              ":client/${iot:ClientId}",
+              ":client/${iot:Connection.Thing.ThingName}",
           },
           {
             Effect: "Allow",
@@ -141,7 +141,7 @@ export class TyhacStack extends Stack {
               Stack.of(this).region +
               ":" +
               Stack.of(this).account +
-              ":topicfilter/${iot:ClientId}/tyhac/sub/presign",
+              ":topicfilter/tyhac/sub/*",
           },
           {
             Effect: "Allow",
@@ -151,7 +151,7 @@ export class TyhacStack extends Stack {
               Stack.of(this).region +
               ":" +
               Stack.of(this).account +
-              ":topic/${iot:ClientId}/tyhac/sub/presign",
+              ":topic/tyhac/sub/*",
           },
           {
             Effect: "Allow",
@@ -161,7 +161,7 @@ export class TyhacStack extends Stack {
               Stack.of(this).region +
               ":" +
               Stack.of(this).account +
-              ":topic/${iot:ClientId}/tyhac/pub/presign",
+              ":topic/tyhac/pub/*",
           },
         ],
       },
