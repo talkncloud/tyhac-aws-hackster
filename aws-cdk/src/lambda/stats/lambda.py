@@ -37,7 +37,7 @@ def handler(event, context):
         incPayload = json.dumps(event)
         incPayload = json.loads(incPayload)
         thingName = incPayload['thing']
-
+    
         stats = getRecord(thingName, "prediction")
         bootup = getRecord(thingName, "bootup")
         
@@ -49,11 +49,11 @@ def handler(event, context):
         updateMqtt(payload)
         
         logging.info("TYHAC: stats handler completed")
-
+    
         return
 
     except Exception as e:
-        logging.error("TYHAC: error calling handler" + str(e))
+        logging.error("TYHAC: error calling handler - " + str(e))
         return None
 
 class DecimalEncoder(json.JSONEncoder):
