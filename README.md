@@ -41,6 +41,9 @@ The core of the solution revolves around two modes:
 
     This mode is intended for clinicians as a field unit. The device does not actively listen and does not require the additional LM393 mic sensor unit, the unit can be used on battery for this mode. This gives the ability to submit positive samples to the dataset and also test patients.
 
+## Quickstart
+
+
 ## Using this repo
 Due to the size and complexity of the project, I have split it up into three distinct sections:
 

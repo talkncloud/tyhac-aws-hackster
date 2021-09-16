@@ -3,7 +3,7 @@
 # Source: https://iot-device-management.workshop.aws/en/provisioning-options/provisioning-with-api.html
 
 # creates the device certificates
-THING_NAME=tyhac-core
+THING_NAME=tyhacthing
 
 # create a thing in the thing registry
 aws iot create-thing --thing-name $THING_NAME

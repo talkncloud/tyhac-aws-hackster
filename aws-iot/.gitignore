@@ -5,6 +5,6 @@
 .vscode/ipch
 .DS_Store
 certs
-lib/env
+lib/env/env.h
 secrets.h
 utilities/AWS_IoT_registration_helper/output_files/*
