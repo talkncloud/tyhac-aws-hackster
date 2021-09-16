@@ -17,7 +17,8 @@ To assist in this process there is a helper script provided. This script uses th
 
 1. Start a new shell terminal
 2. Authenticate using the AWS cli
-3. ./utilities/registration_helper.sh
+3. change directory to utilities/AWS_IoT_registration_helper/
+3. ./registration_helper.sh
 
 TODO: elliptic curve algo, this would not work with the WifiSecure library, I have found a custom AWS lib that may solve this issue.
 

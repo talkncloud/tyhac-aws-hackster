@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Creates the certs in AWS and outputs directory. Certs are loaded onto the device.
+# Note: Deploy the CDK stack before running this stack.
+
 # Source: https://iot-device-management.workshop.aws/en/provisioning-options/provisioning-with-api.html
 
 # creates the device certificates
@@ -19,13 +22,11 @@ CERTIFICATE_ID=$(jq -r ".certificateId" output_files/provisioning-claim-result.j
 echo $CERTIFICATE_ARN
 echo $CERTIFICATE_ID
 
-# create an IoT policy
-POLICY_NAME=${THING_NAME}_Policy
-aws iot create-policy --policy-name $POLICY_NAME \
-  --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action": "iot:*","Resource":"*"}]}'
+# Find the policy from our deployed CDK stack and associate to our device
+POLICY_NAME=$(aws iot list-policies | jq -r .policies[].policyName | grep tyhac)
 
 # attach the policy to your certificate
-aws iot attach-policy --policy-name $POLICY_NAME \
+aws iot attach-policy --policy-name "$POLICY_NAME" \
   --target $CERTIFICATE_ARN
 
 # attach the certificate to your thing

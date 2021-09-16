@@ -157,10 +157,10 @@ bool connectAWS()
   extern const uint8_t aws_root_ca_pem_start[] asm("_binary_certs_aws_root_ca_pem_start");
   // extern const uint8_t aws_root_ca_pem_end[] asm("_binary_certs_aws_root_ca_pem_end");
 
-  extern const uint8_t tyhac_core_certificate_pem_start[] asm("_binary_utilities_AWS_IoT_registration_helper_output_files_tyhac_core_certificate_pem_start");
+  extern const uint8_t tyhac_core_certificate_pem_start[] asm("_binary_utilities_AWS_IoT_registration_helper_output_files_tyhacthing_certificate_pem_start");
   // extern const uint8_t tyhac_core_certificate_pem_end[] asm("_binary_utilities_AWS_IoT_registration_helper_output_files_tyhac_core_certificate_pem_end");
 
-  extern const uint8_t tyhac_core_private_key_start[] asm("_binary_utilities_AWS_IoT_registration_helper_output_files_tyhac_core_private_key_start");
+  extern const uint8_t tyhac_core_private_key_start[] asm("_binary_utilities_AWS_IoT_registration_helper_output_files_tyhacthing_private_key_start");
   // extern const uint8_t tyhac_core_private_key_end[] asm("_binary_utilities_AWS_IoT_registration_helper_output_files_tyhac_core_private_key_end");
 
   // Connect with certs
