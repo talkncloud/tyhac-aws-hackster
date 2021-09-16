@@ -236,8 +236,13 @@ export class TyhacStack extends Stack {
     lambdaSignUrl.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
-        resources: ["*"],
-        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).account + ":topic/tyhac/sub/presign" ]
+        resources: [
+          "arn:aws:iot:" +
+            Stack.of(this).region +
+            ":" +
+            Stack.of(this).account +
+            ":topic/tyhac/sub/presign",
+        ],
       })
     );
 
@@ -246,8 +251,18 @@ export class TyhacStack extends Stack {
     lambdaStaging.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
-        resources: ["*"],
-        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).account + ":topic/tyhac/sub/presign" ]
+        resources: [
+          "arn:aws:iot:" +
+            Stack.of(this).region +
+            ":" +
+            Stack.of(this).account +
+            ":topic/tyhac/pub/status",
+          "arn:aws:iot:" +
+            Stack.of(this).region +
+            ":" +
+            Stack.of(this).account +
+            ":topic/tyhac/sub/predict",
+        ],
       })
     );
 
@@ -256,7 +271,6 @@ export class TyhacStack extends Stack {
     lambdaStats.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
-        //resources: ["*"],
         resources: [
           "arn:aws:iot:" +
             Stack.of(this).region +
@@ -291,8 +305,18 @@ export class TyhacStack extends Stack {
     lambdaPredictor.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
-        resources: ["*"],
-        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).region + ":topic/tyhac/sub/presign" ]
+        resources: [
+          "arn:aws:iot:" +
+            Stack.of(this).region +
+            ":" +
+            Stack.of(this).account +
+            ":topic/tyhac/pub/status",
+          "arn:aws:iot:" +
+            Stack.of(this).region +
+            ":" +
+            Stack.of(this).account +
+            ":topic/tyhac/sub/predict",
+        ],
       })
     );
 

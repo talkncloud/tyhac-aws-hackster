@@ -37,7 +37,7 @@ s3 = boto3.client('s3')
 region = os.environ['REGION']
 tableName = os.environ.get('DYNAMO_TABLE')
 thingTopicStatus = os.environ.get('TOPIC_PUB_STATUS')
-thingTopicPredict = os.environ.get('TOPIC_PUB_PREDICT')
+thingTopicPredict = os.environ.get('TOPIC_SUB_PREDICT')
 dynamodb = boto3.resource('dynamodb', region_name=region)
 from boto3.dynamodb.conditions import And, Attr
 bucketFinal = os.environ['BUCKET_FINAL']
