@@ -237,7 +237,7 @@ export class TyhacStack extends Stack {
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
         resources: ["*"],
-        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).region + ":topic/tyhac/sub/presign" ]
+        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).account + ":topic/tyhac/sub/presign" ]
       })
     );
 
@@ -247,7 +247,7 @@ export class TyhacStack extends Stack {
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
         resources: ["*"],
-        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).region + ":topic/tyhac/sub/presign" ]
+        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).account + ":topic/tyhac/sub/presign" ]
       })
     );
 
@@ -261,7 +261,7 @@ export class TyhacStack extends Stack {
           "arn:aws:iot:" +
             Stack.of(this).region +
             ":" +
-            Stack.of(this).region +
+            Stack.of(this).account +
             ":topic/tyhac/sub/stats",
         ],
       })

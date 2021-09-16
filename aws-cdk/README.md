@@ -17,7 +17,7 @@ yarn install
 ```
 
 ```
-projen install
+projen
 ```
 
 ```
