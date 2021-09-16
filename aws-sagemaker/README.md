@@ -1,5 +1,5 @@
-## Welcome to TYHAC Deep learning with AWS Sagemaker
-This part of the project is how the data is prepared, trained and hosted.
+## Welcome to Tyhac Deep learning with AWS Sagemaker
+This part of the project is how the data is prepared, trained and hosted with AWS Sagemaker using fastai and fastaudio.
 
 ## Notes
 Be sure to check out the [notes](NOTES.md) file, I've tried to include all the links to articles and research that helped me out. None of this would be possible with the great work everyone has done before me. 
