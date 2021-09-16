@@ -195,6 +195,11 @@ export class TyhacStack extends Stack {
       },
     });
 
+    // IoT Core - IAM Role - Dynamo
+    const iotRuleDynamoRole = new iam.Role(this, "iot-role", {
+      assumedBy: new ServicePrincipal("iot.amazonaws.com"),
+    });
+
     // IoT Core - Rule - Dynamo
     const iotRuleDynamo = new iot.CfnTopicRule(this, "iot-rule-dynamo", {
       ruleName: "tyhacDynamoStatus",
@@ -212,11 +217,6 @@ export class TyhacStack extends Stack {
           },
         ],
       },
-    });
-
-    // IoT Core - IAM Role - Dynamo
-    const iotRuleDynamoRole = new iam.Role(this, "iot-role", {
-      assumedBy: new ServicePrincipal("iot.amazonaws.com"),
     });
 
     // Lambda - permissions - s3 put
@@ -256,8 +256,14 @@ export class TyhacStack extends Stack {
     lambdaStats.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["iot:Publish"],
-        resources: ["*"],
-        // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).region + ":topic/tyhac/sub/presign" ]
+        //resources: ["*"],
+        resources: [
+          "arn:aws:iot:" +
+            Stack.of(this).region +
+            ":" +
+            Stack.of(this).region +
+            ":topic/tyhac/sub/stats",
+        ],
       })
     );
 
