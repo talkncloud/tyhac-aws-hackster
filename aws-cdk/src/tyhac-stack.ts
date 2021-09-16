@@ -195,11 +195,6 @@ export class TyhacStack extends Stack {
       },
     });
 
-    // IoT Core - IAM Role - Dynamo
-    const iotRuleDynamoRole = new iam.Role(this, "iot-role", {
-      assumedBy: new ServicePrincipal("iot.amazonaws.com"),
-    });
-
     // IoT Core - Rule - Dynamo
     const iotRuleDynamo = new iot.CfnTopicRule(this, "iot-rule-dynamo", {
       ruleName: "tyhacDynamoStatus",
@@ -217,6 +212,11 @@ export class TyhacStack extends Stack {
           },
         ],
       },
+    });
+
+    // IoT Core - IAM Role - Dynamo
+    const iotRuleDynamoRole = new iam.Role(this, "iot-role", {
+      assumedBy: new ServicePrincipal("iot.amazonaws.com"),
     });
 
     // Lambda - permissions - s3 put
@@ -280,13 +280,6 @@ export class TyhacStack extends Stack {
       sourceArn: iotRuleLambdaStats.attrArn,
     });
 
-    // S3 Bucket event - fire when object created
-    lambdaStaging.addEventSource(
-      new S3EventSource(bucketRaw, {
-        events: [s3.EventType.OBJECT_CREATED],
-      })
-    );
-
     // Lambda - permissions - IoT publish to MQTT
     // TODO: Refine scope
     lambdaPredictor.addToRolePolicy(
@@ -294,6 +287,13 @@ export class TyhacStack extends Stack {
         actions: ["iot:Publish"],
         resources: ["*"],
         // resources: [ "arn:aws:iot:" + Stack.of(this).region +  ":" + Stack.of(this).region + ":topic/tyhac/sub/presign" ]
+      })
+    );
+
+    // S3 Bucket event - fire when object created
+    lambdaStaging.addEventSource(
+      new S3EventSource(bucketRaw, {
+        events: [s3.EventType.OBJECT_CREATED],
       })
     );
 

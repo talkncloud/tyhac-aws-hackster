@@ -32,6 +32,6 @@ const project = new AwsCdkTypeScriptApp({
   },
   projectType: ProjectType.APP,
   gitignore: [".DS_Store"],
-  github: false
+  github: false,
 });
 project.synth();
