@@ -66,6 +66,7 @@ bool connectWifi()
     if (i == 20)
     {
       Serial.println("TYHAC: Unable to connect to wifi, program will reboot");
+      screenElemLoading("wifi failed");
       changeRgbColor("red");
       delay(5000);
       exit(0);
@@ -114,6 +115,7 @@ void setup()
   if (connectWifi())
   {
     Serial.println("TYHAC: Wifi connected");
+    screenElemLoading("wifi connected");
     screenElemHeaderFooter(0, 2);
     changeRgbColor("green");
     delay(2000);
@@ -132,6 +134,7 @@ void setup()
   if (connectAWS())
   {
     Serial.println("TYHAC: AWS IoT MQTT connected");
+    screenElemLoading("connecting to AWS MQTT");
     screenElemHeaderFooter(0, 0);
     changeRgbColor("green");
 
@@ -140,6 +143,7 @@ void setup()
   else
   {
     changeRgbColor("red");
+    screenElemLoading("MQTT failed");
   }
 
   changeRgbColor("else");
@@ -149,6 +153,7 @@ void setup()
   messageRequestStats(); // Creates the dashboard screen
 
   Serial.println("TYHAC: AWS IoT MQTT bootup");
+  screenElemLoading("bootup complete");
 }
 
 /*
@@ -172,19 +177,20 @@ void loop()
     if (audioSensor())
     {
       changeRgbColor("blue");
+      screenElemLoading("recording audio");
       // Capture audio, return true when done
       if (recordAudio())
       {
+        screenElemLoading("audio complete");
         changeRgbColor("else");
 
         // Would sometimes drop after recording?
+        screenElemLoading("reconnecting AWS MQTT");
         reconnectAWS();
+
         // request an S3 pre-signed URL
         messageRequestS3Url("passive");
-
-        // end, pick up again
-        // The loop tends to break MQTT once the audio starts / stops, this will pick it up again
-        // connectAWS();
+        screenElemLoading("requesting AWS S3 url");
       }
     }
   }
@@ -196,11 +202,15 @@ void loop()
     {
       tyhacButtonTestRequest = 0; // reset the flag
       changeRgbColor("blue");
+      screenElemLoading("recording audio");
       if (recordAudio())
       {
+        screenElemLoading("audio complete");
         changeRgbColor("else");
+        screenElemLoading("reconnecting AWS MQTT");
         reconnectAWS();
         messageRequestS3Url("test");
+        screenElemLoading("requesting AWS S3 url");
       }
     }
 
@@ -208,11 +218,14 @@ void loop()
     {
       tyhacButtonSubmitRequest = 0; // reset the flag
       changeRgbColor("blue");
+      screenElemLoading("recording audio");
       if (recordAudio())
       {
         changeRgbColor("else");
+        screenElemLoading("reconnecting AWS MQTT");
         reconnectAWS();
         messageRequestS3Url("submit");
+        screenElemLoading("requesting AWS S3 url");
       }
     }
   }

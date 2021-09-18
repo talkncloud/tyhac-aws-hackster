@@ -14,4 +14,4 @@ void screenElemHeaderFooter(int statusWifi, int statusAws);
 void screenDashboard(String samples, String sampledays, String positive, String negative, String uptime);
 void screenCovidResult(String status, String predictClass, String predictPercent, String filename);
 void screenClinician();
-void screenElemSpinner();
+void screenElemLoading(String loadingMessage);

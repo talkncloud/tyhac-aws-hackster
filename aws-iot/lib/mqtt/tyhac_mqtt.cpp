@@ -8,6 +8,7 @@
 #include "tyhac_uploads3.h"
 #include "tyhac_ntp.h"
 #include "tyhac_rgb.h"
+#include "tyhac_ui.h"
 #include "env.h"
 
 WiFiClientSecure wifiClient = WiFiClientSecure();
@@ -87,37 +88,42 @@ void messageHandler(String &topic, String &payload)
   if (action == "uploads3")
   {
     Serial.println("TYHAC: AWS IoT MQTT MSG handler - upload s3");
+    screenElemLoading("AWS S3 uploading");
     // TODO: Would be better to use a queue from the main program
     if (uploadS3(payload))
     {
       String status = "success";
+      screenElemLoading("AWS S3 upload success");
       messageUploadS3(status, filename, mode, modeType);
     }
     else
     {
       String status = "fail";
+      screenElemLoading("AWS S3 upload fail");
       messageUploadS3(status, filename, mode, modeType);
     }
   }
   else if (action == "prediction")
   {
     Serial.println("TYHAC: AWS IoT MQTT MSG handler - prediction");
-
     // Update display with prediction results
     String status = doc["status"];
     String predictClass = doc["prediction"]["class"];
     String predictPercent = doc["prediction"]["percent"];
+    screenElemLoading("clear"); // remove loading messages
     screenCovidResult(status, predictClass, predictPercent, filename);
   }
   else if (action == "dashboard")
   {
     Serial.println("TYHAC: AWS IoT MQTT MSG handler - dashboard");
+    screenElemLoading("AWS MQTT dashboard");
     String samples = doc["samples"];
     String sampledays = doc["sampledays"];
     String positive = doc["positive"];
     String negative = doc["negative"];
     String uptime = doc["uptime"];
     screenDashboard(samples, sampledays, positive, negative, uptime);
+    screenElemLoading("clear"); // remove loading messages
   }
 }
 
@@ -135,6 +141,7 @@ void reconnectAWS()
   if (!mqttClient.connected())
   {
     Serial.println("TYHAC: AWS IoT MQTT disconnected...reconnecting...");
+    screenElemLoading("AWS MQTT reconnecting");
     screenElemHeaderFooter(0, 1);
     mqttClient.connect(THINGNAME);
     mqttClient.onMessage(messageHandler);
@@ -196,6 +203,7 @@ bool connectAWS()
 */
 void subscribeAWS()
 {
+  screenElemLoading("AWS MQTT subscribe");
   // sign url
   mqttClient.subscribe(TYHAC_AWSIOT_SUB_PRESIGN);
   // predict
@@ -204,6 +212,7 @@ void subscribeAWS()
   mqttClient.subscribe(TYHAC_AWSIOT_SUB_STATS);
 
   Serial.println("TYHAC: AWS IoT MQTT subscribed");
+  screenElemLoading("clear");
 }
 
 /*

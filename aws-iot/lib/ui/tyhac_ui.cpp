@@ -13,10 +13,12 @@
 #include "tyhac_ui.h"
 #include "tyhac_mqtt.h"
 #include "tyhac_version.h"
+#include "tyhac_rgb.h"
 
 // colors
 // I found it easier to use 565 with RGB
 uint16_t tyhacBluePrimary = M5.Lcd.color565(0, 106, 219);
+uint16_t tyhacBluePrimaryAlt = M5.Lcd.color565(46, 86, 132);
 uint16_t tyhacOrangePrimary = M5.Lcd.color565(255, 153, 0);
 uint16_t tyhacGreyText = M5.Lcd.color565(666, 666, 666);
 uint16_t tyhacRedPrimary = M5.Lcd.color565(219, 0, 0);
@@ -142,6 +144,7 @@ void buttonListeners(TouchPoint_t pos)
 */
 void screenClinician()
 {
+    changeRgbColor("else");
     M5.Lcd.setTextColor(WHITE);
     M5.Lcd.drawRoundRect(50, 100, 100, 50, 10, tyhacBluePrimary);
     M5.Lcd.fillRoundRect(50, 100, 100, 50, 10, tyhacBluePrimary);
@@ -201,29 +204,29 @@ void screenDashboard(String samples, String sampledays, String positive, String 
 {
     M5.Lcd.setTextColor(WHITE);
     M5.Lcd.setTextSize(2);
-    M5.Lcd.drawString(samples, 10, 20, 2);
+    M5.Lcd.drawString(samples, 10, 30, 2);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.drawString("samples", textSpacing(samples), 30, 2); // 30, 30, 2
+    M5.Lcd.drawString("samples", textSpacing(samples), 40, 2); // 30, 30, 2
 
     M5.Lcd.setTextSize(2);
-    M5.Lcd.drawString(sampledays, 10, 60, 2);
+    M5.Lcd.drawString(sampledays, 10, 70, 2);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.drawString("days since sample", textSpacing(sampledays), 70, 2);
+    M5.Lcd.drawString("days since sample", textSpacing(sampledays), 80, 2);
 
     M5.Lcd.setTextSize(2);
-    M5.Lcd.drawString(positive, 10, 100, 2);
+    M5.Lcd.drawString(positive, 10, 110, 2);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.drawString("positive", textSpacing(positive), 110, 2);
+    M5.Lcd.drawString("positive", textSpacing(positive), 120, 2);
 
     M5.Lcd.setTextSize(2);
-    M5.Lcd.drawString(negative, 10, 140, 2);
+    M5.Lcd.drawString(negative, 10, 150, 2);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.drawString("negative", textSpacing(negative), 150, 2);
+    M5.Lcd.drawString("negative", textSpacing(negative), 160, 2);
 
     M5.Lcd.setTextSize(2);
-    M5.Lcd.drawString(uptime, 10, 180, 2);
+    M5.Lcd.drawString(uptime, 10, 190, 2);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.drawString("days uptime", textSpacing(uptime), 190, 2);
+    M5.Lcd.drawString("days uptime", textSpacing(uptime), 200, 2);
     Serial.println("TYHAC: Screen dashboard rendered");
 }
 
@@ -243,12 +246,20 @@ void screenCovidResult(String status, String predictClass, String predictPercent
         bgColor = DARKGREEN;
         predictClassSet = predictClass;
         predictPercentSet = predictPercent;
+        changeRgbColor("green");
     }
     else if (predictClass == "positive")
     {
         bgColor = RED;
         predictClassSet = predictClass;
         predictPercentSet = predictPercent;
+        changeRgbColor("red");
+    }
+
+    // Now we know its invalid
+    if (predictClassSet == "invalid")
+    {
+        changeRgbColor("orange"); // invalid
     }
 
     float percentFloat = predictPercentSet.toFloat();
@@ -270,6 +281,7 @@ void screenCovidResult(String status, String predictClass, String predictPercent
         M5.Lcd.clearDisplay();
         screenElemHeaderFooter(0, 0);
         messageRequestStats(); // update the dash stats
+        changeRgbColor("else");
     }
 }
 
@@ -316,41 +328,26 @@ void screenElemHeaderFooter(int statusWifi, int statusAws)
     M5.Lcd.drawString(tyhacVersion, 230, 220, 2);
 }
 
-// TBA
-void screenElemSpinner()
+/*
+*   screenElemLoading(String message)
+*   top bar information / status messages, takes a string as the message
+*   and displays the message with a blue dot.
+*/
+void screenElemLoading(String loadingMessage)
 {
-    // Spinner
-    // https://electropeak.com/learn/absolute-beginners-guide-to-tft-lcd-displays-by-arduino/
-
-    int col[8];
-
-    // color565 converts RGB to int
-    col[0] = M5.Lcd.color565(155, 0, 50);
-    col[1] = M5.Lcd.color565(170, 30, 80);
-    col[2] = M5.Lcd.color565(195, 60, 110);
-    col[3] = M5.Lcd.color565(215, 90, 140);
-    col[4] = M5.Lcd.color565(230, 120, 170);
-    col[5] = M5.Lcd.color565(250, 150, 200);
-    col[6] = M5.Lcd.color565(255, 180, 220);
-    col[7] = M5.Lcd.color565(255, 210, 240);
-
-    for (int i = 8; i > 0; i--)
+    uint16_t circleColor;
+    if (loadingMessage == "clear")
     {
-        M5.Lcd.fillCircle(240 + 40 * (cos(-i * PI / 4)), 120 + 40 * (sin(-i * PI / 4)), 10, col[0]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 1) * PI / 4)), 120 + 40 * (sin(-(i + 1) * PI / 4)), 10, col[1]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 2) * PI / 4)), 120 + 40 * (sin(-(i + 2) * PI / 4)), 10, col[2]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 3) * PI / 4)), 120 + 40 * (sin(-(i + 3) * PI / 4)), 10, col[3]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 4) * PI / 4)), 120 + 40 * (sin(-(i + 4) * PI / 4)), 10, col[4]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 5) * PI / 4)), 120 + 40 * (sin(-(i + 5) * PI / 4)), 10, col[5]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 6) * PI / 4)), 120 + 40 * (sin(-(i + 6) * PI / 4)), 10, col[6]);
-        delay(15);
-        M5.Lcd.fillCircle(240 + 40 * (cos(-(i + 7) * PI / 4)), 120 + 40 * (sin(-(i + 7) * PI / 4)), 10, col[7]);
-        delay(15);
+        circleColor = BLACK;
+        loadingMessage = "";
     }
+    else
+    {
+        circleColor = tyhacBluePrimary;
+    }
+    M5.Lcd.drawRect(25, 1, 200, 17, BLACK); // clear message
+    M5.Lcd.fillRect(25, 1, 200, 17, BLACK); // clear message fill
+    M5.Lcd.fillCircle(15, 10, 5, circleColor);
+    M5.Lcd.setTextSize(1);
+    M5.Lcd.drawString(loadingMessage, 25, 2, 2); // 30, 30, 2
 }

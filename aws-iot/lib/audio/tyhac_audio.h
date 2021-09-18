@@ -10,7 +10,7 @@
 #define MIC_I2S_NUMBER I2S_NUM_0
 
 #define MIC_Unit 36 // LM393 mic unit
-#define MIC_SEN_VALUE 2500 // Threshold to return true to record audio. Gain adjusted to 50%.
+#define MIC_SEN_VALUE 2050 // Threshold to return true to record audio. Gain adjusted to 50%.
 
 #define RECORD_TIME             10 // seconds
 #define SAMPLE_RATE             44100
@@ -20,6 +20,6 @@
 #define BYTE_RATE               (1 * SAMPLE_RATE * ((AUDIO_BIT / 8))
 #define FLASH_RECORD_SIZE       (BYTE_RATE * RECORD_TIME))
 
-void createWavHeader(byte* wav_header, int wav_data_size);  // size of header is 44
+void wavHeader(char* wav_header, uint32_t wav_size, uint32_t sample_rate);
 bool recordAudio();
 bool audioSensor();

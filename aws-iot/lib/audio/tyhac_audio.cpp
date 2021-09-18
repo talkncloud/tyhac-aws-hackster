@@ -11,7 +11,8 @@
 
 File file;
 
-static int16_t i2s_readraw_buff[AUDIO_SAMPLE_SIZE];
+// static int16_t i2s_readraw_buff[AUDIO_SAMPLE_SIZE];
+static uint8_t i2s_readraw_buff[AUDIO_SAMPLE_SIZE];
 int data_offset = 0;
 const int WAVE_HEADER_SIZE = 44;
 int micSensor = 0;
@@ -41,7 +42,6 @@ bool initI2SMic()
         .dma_buf_count = 2,                           // DMA buffer count.
         .dma_buf_len = 1024,                          // DMA buffer length.
     };
-    // i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_PDM);
 
     // Install and drive I2S.
     err += i2s_driver_install(MIC_I2S_NUMBER, &i2s_config, 0, NULL);
@@ -73,15 +73,19 @@ bool recordAudio()
     SD.remove(TYHAC_AUDIO_SAMPLE);
     file = SD.open(TYHAC_AUDIO_SAMPLE, FILE_WRITE);
 
+    // Check for file errors
     if (!file)
     {
         Serial.println("TYHAC: Error writing to SD card");
         return false;
     };
 
-    byte wav_header[WAVE_HEADER_SIZE];
-    createWavHeader(wav_header, FLASH_RECORD_SIZE);
-    file.write(wav_header, WAVE_HEADER_SIZE);
+    // Create the wav file header
+    char wav_header_fmt[WAVE_HEADER_SIZE];
+    wavHeader(wav_header_fmt, FLASH_RECORD_SIZE, int(SAMPLE_RATE));
+
+    // Write the headers
+    file.write((uint8_t *)wav_header_fmt, WAVE_HEADER_SIZE);
 
     // Initialise i2s
     initI2SMic();
@@ -90,72 +94,52 @@ bool recordAudio()
 
     int flash_wr_size = 0;
     Serial.println("TYHAC: Recording...");
+    // Fill the wav file until the file size
     while (flash_wr_size < FLASH_RECORD_SIZE)
     {
-        i2s_read(MIC_I2S_NUMBER, (char *)i2s_readraw_buff, AUDIO_SAMPLE_SIZE, &bytes_read, portMAX_DELAY);
-        file.write((const byte *)i2s_readraw_buff, AUDIO_SAMPLE_SIZE);
+        i2s_read(MIC_I2S_NUMBER, i2s_readraw_buff, AUDIO_SAMPLE_SIZE, &bytes_read, portMAX_DELAY);
+        file.write(i2s_readraw_buff, bytes_read);
         flash_wr_size += bytes_read;
     }
 
+    // clean up
     file.close();
     Serial.println("TYHAC: Audio recording completed");
     return true;
 }
 
 /*
-*   createWavHeader(wav_header, file_size)
+*   wavHeader(char* wav_header, uint32_t wav_size, uint32_t sample_rate)
 *   Wav files have a specific set of requirements, this will create the file wav based on those requirements and
 *   our audio requirements.
 *
-*   Source/Credit: https://github.com/Makerfabs/Project_ESP32-Voice-Interaction/tree/master/example/ESP32_Record_Play
+*   Source/Credit:  https://github.com/espressif/esp-idf/blob/316988bd2d3379912e40c159de953318afe5050e/examples/peripherals/i2s/i2s_audio_recorder_sdcard/main/i2s_recorder_main.c
+*                   https://github.com/Makerfabs/Project_ESP32-Voice-Interaction/tree/master/example/ESP32_Record_Play
 */
-void createWavHeader(byte *wav_header, int wave_data_size)
+void wavHeader(char *wav_header, uint32_t wav_size, uint32_t sample_rate)
 {
-    wav_header[0] = 'R';
-    wav_header[1] = 'I';
-    wav_header[2] = 'F';
-    wav_header[3] = 'F';
-    unsigned int fileSizeMinus8 = wave_data_size + 44 - 8;
-    wav_header[4] = (byte)(fileSizeMinus8 & 0xFF);
-    wav_header[5] = (byte)((fileSizeMinus8 >> 8) & 0xFF);
-    wav_header[6] = (byte)((fileSizeMinus8 >> 16) & 0xFF);
-    wav_header[7] = (byte)((fileSizeMinus8 >> 24) & 0xFF);
-    wav_header[8] = 'W';
-    wav_header[9] = 'A';
-    wav_header[10] = 'V';
-    wav_header[11] = 'E';
-    wav_header[12] = 'f';
-    wav_header[13] = 'm';
-    wav_header[14] = 't';
-    wav_header[15] = ' ';
-    wav_header[16] = 0x10; // linear PCM
-    wav_header[17] = 0x00;
-    wav_header[18] = 0x00;
-    wav_header[19] = 0x00;
-    wav_header[20] = 0x01; // linear PCM
-    wav_header[21] = 0x00;
-    wav_header[22] = 0x01; // monoral
-    wav_header[23] = 0x00;
-    wav_header[24] = 0x44; // sampling rate 44100
-    wav_header[25] = 0xAC;
-    wav_header[26] = 0x00;
-    wav_header[27] = 0x00;
-    wav_header[28] = 0x88; // Byte/sec = 44100x2x1 = 88200
-    wav_header[29] = 0x58;
-    wav_header[30] = 0x01;
-    wav_header[31] = 0x00;
-    wav_header[32] = 0x02; // 16bit monoral
-    wav_header[33] = 0x00;
-    wav_header[34] = 0x10; // 16bit
-    wav_header[35] = 0x00;
-    wav_header[36] = 'd';
-    wav_header[37] = 'a';
-    wav_header[38] = 't';
-    wav_header[39] = 'a';
-    wav_header[40] = (byte)(wave_data_size & 0xFF);
-    wav_header[41] = (byte)((wave_data_size >> 8) & 0xFF);
-    wav_header[42] = (byte)((wave_data_size >> 16) & 0xFF);
-    wav_header[43] = (byte)((wave_data_size >> 24) & 0xFF);
+
+    // See this for reference: http://soundfile.sapp.org/doc/WaveFormat/
+    uint32_t file_size = wav_size + WAVE_HEADER_SIZE - 8;
+    uint32_t byte_rate = 1 * SAMPLE_RATE * (AUDIO_BIT / 8);
+
+    const char set_wav_header[] = {
+        'R', 'I', 'F', 'F',                                                  // ChunkID
+        file_size, file_size >> 8, file_size >> 16, file_size >> 24,         // ChunkSize
+        'W', 'A', 'V', 'E',                                                  // Format
+        'f', 'm', 't', ' ',                                                  // Subchunk1ID
+        0x10, 0x00, 0x00, 0x00,                                              // Subchunk1Size (16 for PCM)
+        0x01, 0x00,                                                          // AudioFormat (1 for PCM)
+        0x01, 0x00,                                                          // NumChannels (1 channel)
+        sample_rate, sample_rate >> 8, sample_rate >> 16, sample_rate >> 24, // SampleRate
+        byte_rate, byte_rate >> 8, byte_rate >> 16, byte_rate >> 24,         // ByteRate
+        0x02, 0x00,                                                          // BlockAlign
+        0x10, 0x00,                                                          // BitsPerSample (16 bits)
+        'd', 'a', 't', 'a',                                                  // Subchunk2ID
+        wav_size, wav_size >> 8, wav_size >> 16, wav_size >> 24,             // Subchunk2Size
+    };
+
+    memcpy(wav_header, set_wav_header, sizeof(set_wav_header));
 }
 
 /*
