@@ -131,4 +131,4 @@ Yes please! If you're keen to build on this and share with the community I am ke
 
 ## Author
 
-This projected was created by Michael (Mick/Mike) Jacobsson - https://www.talkncloud.com
+This project was created by Michael (Mick/Mike) Jacobsson - https://www.talkncloud.com
