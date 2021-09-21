@@ -24,9 +24,18 @@ I'll update this readme with the hackster link once published.
 
 ## High level design
 
+The design uses the M5 Core2 AWS EduKit with AWS IoT Core, S3, DynamoDB and SageMaker. The model source data is pulled from public repositories containing labelled covid-19 audio samples, both positive and negative as well as additional attritibutes that may be useful. Check the source repositories in the aws-sagemaker folder for more details. The audio files are processed and prepared to be consumed by the SageMaker training job, the audio samples are processed into mel-spectrograms on the fly during training thanks to fastai and fastaudio.
+
+Here is a short demo of the device working in action:
+<img src="tyhac_hackster_aws.gif" width="800">
+
+The design shows a WAV sample recorded from the device being securely uploaded to S3. This is made possible by using IoT core as the central touch point for all IoT related interactions. DynamoDB has been selected as the event data repoistory, DynamoDB provides a way to extend the use cases into mobile and web apps. The other noteable part of the design is that model hosting is done via Lambda (containers), I chose Lambda to reduce costs and the response times are acceptable.
+
 <img src="design.png" width="800">
 
 ## Bill of materials
+
+The good part about this build is that you need very few parts and the total cost is around $70 USD
 
 | Item | Quantity | Description | Link |
 |--|--|--|--|
@@ -68,6 +77,7 @@ I have used [projen](https://github.com/projen/projen) to create the project (gr
 1. npm install -g projen
 2. yarn install
 3. authenticate to aws using the cli tools either creds, sso or magic
+3. projen
 3. projen deploy
 
 ### IoT
@@ -77,6 +87,16 @@ The device code has been developed in arduino, I have used [platform.io](https:/
 ### Sagemaker
 
 You don't need to deploy anything in sagemaker to run this project. The sagemaker code is not part of CDK, I've supplied the notebooks and code for people to get a feel for how it works in sagemaker and hopefully build on.
+
+model arch & hyperparameters:
+
+| parameter | setting | comments |
+|--|--|--|
+| architecture | resnet18 | sampled resnet, 34, 50 |
+| epochs | 12 | |
+| batch-size | 64 |
+| optimizer | adam | |
+| learning rate | 0.01 | | 
 
 For the deep learning ML fans out there, the model deployed in this project achieves the following:
 
