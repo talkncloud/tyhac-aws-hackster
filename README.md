@@ -18,9 +18,15 @@ Not a doctor. No medical professionals have reviewed or worked on this project. 
 
 This project is for builders, thinkers and those who can't stop tinkering. If you're into IoT, ML, AWS and/or tech, then read on. 
 
-This project was my submission to the [hackster healthy spaces with challenge 2021](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) which uses an [M5 Stack Core2 AWS IoT EduKit](https://www.talkncloud.com/core-2-m5-iot-stack-aws-edukit-unboxing/), a small esp32 device with a whole bunch of capabilities and AWS!
+I originally created this project to share with the community, it has since been submitted to the [hackster healthy spaces with challenge 2021](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and has since won runner up.
 
-I'll update this readme with the hackster link once published.
+The hackster write up contains a wealth of information:
+Link to [hackster submission](https://www.hackster.io/mick20/tyhac-covid-19-audio-diagnostic-stack-9d5455).
+
+I've since submitted the project to the 2021 Hackaday Prize for [Challenge 5: Reactivate Wildcard](https://hackaday.io/contest/179533-supplyframe-designlab-2021-hackaday-prize/log/192962-challenge-5-reactivate-wildcard) and I've added more information in the build logs which shows more detail on how the project was created.
+
+Link the hackaday write up:
+[hackaday reactivate submission](https://hackaday.io/project/182276-tyhac-covid-19-audio-diagnostic-stack)
 
 ## High level design
 
